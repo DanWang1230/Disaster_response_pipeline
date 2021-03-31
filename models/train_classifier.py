@@ -25,7 +25,7 @@ def load_data(database_filepath):
     '''
     load dataset
     '''
-    
+    # load data from database
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('DisasterResponse', engine)
     X = df['message'].values
@@ -49,7 +49,9 @@ def tokenize(text):
     
     clean = []
     for tok in token:
+        # lemmatize each token
         tok_clean = lemmatizer.lemmatize(tok).lower().strip()
+        # drop stop words
         if tok_clean not in stop_words:
             clean.append(tok_clean)
     return clean
@@ -59,16 +61,19 @@ def build_model():
     '''
     Build pipeline and use grid search
     '''
+    # build a machine learning pipeline
     pipeline = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(RandomForestClassifier(), n_jobs=-1))
     ])
     
+    # define parameters for grid search
     parameters = {
     'vect__max_df': (0.5, 0.75, 1.0)
     }
     
+    # grid search
     cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=-1, cv=2)
     
     return cv
