@@ -3,6 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    '''load and merge datasets'''
     # load messages dataset
     messages = pd.read_csv(messages_filepath)   
     # load categories dataset
@@ -14,6 +15,7 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    '''clean the dataset'''
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
     # select the first row of the categories dataframe
@@ -40,6 +42,7 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''Save the clean dataset into an sqlite database'''
     engine = create_engine('sqlite:///DisasterResponse.db')
     df.to_sql('DisasterResponse', engine, index=False, if_exists='replace')
 
